@@ -4,7 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>For Samragi ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
+    @font-face {
+      font-family: 'HarryP';
+      src: url('HarryP.ttf') format('truetype'); /* Replace with actual font file, e.g., https://www.dafont.com/lumos.font */
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -20,12 +27,76 @@
       overflow-x: hidden;
       min-height: 100vh;
       position: relative;
+      transition: all 0.5s ease;
+    }
+
+    body.romantic-theme {
+      font-family: 'Georgia', serif;
+      color: #f0f0f0;
+    }
+
+    body.cigarettes-theme {
+      font-family: 'Vollkorn', serif;
+      color: #fff;
+    }
+
+    body.instruments-theme {
+      font-family: 'Georgia', serif;
+      color: #f0f0f0;
+    }
+
+    body.hogwarts-theme {
+      font-family: 'HarryP', serif;
+      color: #ffd700;
+    }
+
+    body.romantic-theme .message-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.cigarettes-theme .message-box {
+      background: rgba(44, 24, 16, 0.7);
+      border: 1px solid #8b4513;
+    }
+
+    body.instruments-theme .message-box {
+      background: rgba(26, 26, 46, 0.7);
+      border: 1px solid #0f3460;
+    }
+
+    body.hogwarts-theme .message-box {
+      background: rgba(13, 27, 42, 0.7);
+      border: 1px solid #ffd700;
     }
 
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
+    }
+
+    .theme-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      display: none;
+      transition: opacity 0.5s;
+      opacity: 0;
+    }
+
+    .theme-background.visible {
+      opacity: 1;
+      display: block;
+    }
+
+    #cigarettesBackground video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .stars {
@@ -140,9 +211,7 @@
 
     .message-box {
       max-width: 900px;
-      background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 40px;
       border-radius: 30px;
       box-shadow: 
@@ -195,7 +264,6 @@
       line-height: 1.9;
       text-align: center;
       margin-bottom: 25px;
-      animation: typewriter 4s ease-out;
       position: relative;
     }
 
@@ -220,9 +288,145 @@
     .interactive-elements {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
       margin: 40px 0;
       flex-wrap: wrap;
+    }
+
+    .theme-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .theme-button {
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid transparent;
+      border-radius: 20px;
+      color: #f0f0f0;
+      font-size: 0.9em;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-button:hover, .theme-button.active {
+      border-color: #ff69b4;
+      background: rgba(255, 105, 180, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .guitar-theme {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 80 Q30 70 40 80 Q50 90 60 80 Q70 70 80 80" stroke="%23ff69b4" stroke-width="2" fill="none" opacity="0.3"/></svg>');
+      background-size: 50px 50px;
+    }
+
+    .cigarettes-theme {
+      background: linear-gradient(135deg, #2c1810 0%, #8b4513 50%, #2c1810 100%);
+      filter: sepia(20%);
+    }
+
+    .instruments-theme {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
+    .hogwarts-theme {
+      background: linear-gradient(135deg, #0d1b2a 0%, #415a77 50%, #778da9 100%);
+      position: relative;
+    }
+
+    .hogwarts-theme::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%);
+    }
+
+    .floating-guitars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .guitar {
+      position: absolute;
+      font-size: 30px;
+      animation: guitarFloat 10s infinite linear;
+      opacity: 0.6;
+    }
+
+    @keyframes guitarFloat {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% {
+        transform: translateY(-100px) rotate(-360deg);
+        opacity: 0;
+      }
+    }
+
+    .magical-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .magic-particle {
+      position: absolute;
+      color: #ffd700;
+      font-size: 16px;
+      animation: magicFloat 8s infinite linear;
+    }
+
+    @keyframes magicFloat {
+      0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% {
+        transform: translateY(-100px) translateX(100px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .theme-message {
+      text-align: center;
+      font-style: italic;
+      color: #dda0dd;
+      margin: 20px 0;
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+
+    .theme-message.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .magic-button {
@@ -249,6 +453,29 @@
       transform: translateY(0) scale(0.95);
     }
 
+    .music-control {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .music-control button {
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      color: #ff69b4;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .music-control button:hover {
+      background: rgba(255, 105, 180, 0.3);
+      transform: scale(1.1);
+    }
+
     .footer {
       margin-top: 50px;
       font-size: 1.2em;
@@ -256,6 +483,15 @@
       text-align: center;
       animation: heartbeat 2s ease-in-out infinite;
       font-weight: 500;
+    }
+
+    .footer a {
+      color: #ffb6c1;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
     }
 
     @keyframes heartbeat {
@@ -291,13 +527,8 @@
       background: linear-gradient(90deg, #ff69b4, #ffc0cb);
       border-radius: 10px;
       width: 0%;
-      animation: fillLove 3s ease-out 2s forwards;
+      transition: width 0.5s ease;
       position: relative;
-    }
-
-    @keyframes fillLove {
-      0% { width: 0%; }
-      100% { width: 100%; }
     }
 
     .love-fill::after {
@@ -308,6 +539,12 @@
       transform: translateY(-50%);
       color: white;
       font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .love-fill.full::after {
+      opacity: 1;
     }
 
     .sparkle {
@@ -345,6 +582,88 @@
       }
     }
 
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    }
+
+    @keyframes slideInRight {
+      0% { transform: translateX(100%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes heartPop {
+      0% { transform: scale(0) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes guitarWave {
+      0% { 
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+      }
+      50% { 
+        transform: scale(1.5) rotate(180deg);
+        opacity: 1;
+      }
+      100% { 
+        transform: scale(0.5) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes musicDance {
+      0% { 
+        transform: scale(0) translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      25% { 
+        transform: scale(1.2) translateY(-20px) rotate(90deg);
+        opacity: 1;
+      }
+      50% { 
+        transform: scale(1) translateY(-40px) rotate(180deg);
+        opacity: 1;
+      }
+      75% { 
+        transform: scale(1.3) translateY(-20px) rotate(270deg);
+        opacity: 1;
+      }
+      100% { 
+        transform: scale(0) translateY(0) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes spellCast {
+      0% { 
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+      }
+      30% { 
+        transform: scale(1.5) rotate(120deg);
+        opacity: 1;
+        filter: brightness(2);
+      }
+      60% { 
+        transform: scale(1.2) rotate(240deg);
+        opacity: 1;
+        filter: brightness(1.5);
+      }
+      100% { 
+        transform: scale(0.3) rotate(360deg);
+        opacity: 0;
+        filter: brightness(0.5);
+      }
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 30px 15px;
@@ -363,12 +682,33 @@
         flex-direction: column;
         align-items: center;
       }
+
+      .music-control {
+        top: 10px;
+        left: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="theme-background" id="cigarettesBackground">
+    <video autoplay loop muted playsinline poster="smoke.jpg">
+      <source src="smoke.mp4" type="video/mp4"> <!-- Replace with actual video, e.g., https://pixabay.com/videos/smoke-fog-mist-dark-ambient-19476/ -->
+    </video>
+  </div>
   <div class="stars" id="stars"></div>
   <div class="floating-hearts" id="hearts"></div>
+  <div class="floating-guitars" id="guitars"></div>
+  <div class="magical-particles" id="magicalParticles"></div>
+
+  <audio id="backgroundMusic" loop preload="auto"></audio>
+  <audio id="sparkleSound" src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-77338/zapsplat_cartoon_magic_sparkle_02_77338.mp3" preload="auto"></audio>
+  <audio id="magicSound" src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-77338/zapsplat_cartoon_magic_wand_02_77338.mp3" preload="auto"></audio>
+  <audio id="themeChangeSound" src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-77338/zapsplat_cartoon_magic_chime_02_77338.mp3" preload="auto"></audio>
+
+  <div class="music-control">
+    <button id="musicToggle" aria-label="Toggle Music" title="Toggle Music">🎵</button>
+  </div>
 
   <div class="container">
     <div class="title-section">
@@ -398,7 +738,7 @@
       <div class="love-meter">
         <div class="love-fill"></div>
       </div>
-      <p style="text-align: center; font-size: 0.9em; color: #ffb6c1; margin-top: 10px;">Love Level: Infinite 💕</p>
+      <p id="loveLevelText" style="text-align: center; font-size: 0.9em; color: #ffb6c1; margin-top: 10px;">Love Level: 0%</p>
       
       <p class="message-reveal" style="animation-delay: 2s;">
         You're not just someone I adore — you're someone I *feel*. You're the reason my heart has a rhythm. You make everything brighter.
@@ -414,18 +754,128 @@
         "You're the best thing that's ever happened to me." 💫
       </div>
 
+      <div class="theme-message" id="themeMessage">Choose a vibe that matches your heart 💕</div>
+
+      <div class="theme-selector">
+        <button class="theme-button active" onclick="setTheme('romantic')" id="romanticBtn" aria-label="Romantic Night Theme">
+          💕 Romantic Night
+        </button>
+        <button class="theme-button" onclick="setTheme('cigarettes')" id="cigarettesBtn" aria-label="Cigarettes Vibe Theme">
+          🎸 Cigarettes Vibe
+        </button>
+        <button class="theme-button" onclick="setTheme('instruments')" id="instrumentsBtn" aria-label="Musical Dreams Theme">
+          🎵 Musical Dreams
+        </button>
+        <button class="theme-button" onclick="setTheme('hogwarts')" id="hogwartsBtn" aria-label="Hogwarts Magic Theme">
+          ⚡ Hogwarts Magic
+        </button>
+      </div>
+
       <div class="interactive-elements">
-        <button class="magic-button" onclick="createFireworks()">✨ Magic Sparkles</button>
-        <button class="magic-button" onclick="showLoveMessage()">💕 Secret Message</button>
-        <button class="magic-button" onclick="changeBackgroundMusic()">🎵 Change Mood</button>
+        <button class="magic-button" onclick="createFireworks()" aria-label="Create Fireworks">✨ Magic Sparkles</button>
+        <button class="magic-button" onclick="showLoveMessage()" aria-label="Show Secret Message">💕 Secret Message</button>
+        <button class="magic-button" onclick="playThemeEffect()" aria-label="Play Theme Effect">🎭 Theme Effect</button>
       </div>
     </div>
 
-    <div class="footer">Forever yours, San ♡</div>
+    <div class="footer">
+      Forever yours, San ♡<br>
+      <small>
+        Music: <a href="https://www.chosic.com/free-music/all/" target="_blank">Chosic</a> & 
+        <a href="https://pixabay.com/music/" target="_blank">Pixabay</a><br>
+        Sound Effects: <a href="https://www.zapsplat.com" target="_blank">Zapsplat.com</a>
+      </small>
+    </div>
   </div>
 
   <script>
-    // Create animated stars
+    let loveLevel = 0;
+    let isMusicPlaying = false;
+    let currentTheme = 'romantic';
+
+    const themes = {
+      romantic: {
+        bg: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #2a1a3a 50%, #1a0a2a 75%, #0a0a0a 100%)',
+        music: 'https://www.chosic.com/download-audio/29445/',
+        messages: [
+          "You make my heart skip beats I didn't know existed 💓",
+          "Every day with you feels like a love song 🎶",
+          "You're the reason I believe in magic ✨",
+          "My love for you grows stronger with every heartbeat 💗"
+        ]
+      },
+      cigarettes: {
+        bg: 'linear-gradient(135deg, #2c1810 0%, #1a1a1a 25%, #8b4513 50%, #2c1810 75%, #1a0a0a 100%)',
+        music: 'https://www.chosic.com/download-audio/29447/',
+        messages: [
+          "You're my sweet dream in this hazy world 🎸",
+          "Like a guitar riff that never ends, you're stuck in my head 🚬",
+          "Slow dancing to our own rhythm, lost in time ⏰",
+          "You're the melody I hum when no one's listening 🎵",
+          "In this quiet chaos, you're my only peace 🌙"
+        ]
+      },
+      instruments: {
+        bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)',
+        music: 'https://pixabay.com/music/modern-classical-inspirational-piano-121567/',
+        messages: [
+          "You're the symphony my heart plays every morning 🎼",
+          "Like piano keys under moonlight, you touch my soul 🎹",
+          "You're the crescendo in my quiet life 🎻",
+          "Every word you speak is music to my ears 🎺",
+          "You're my favorite song on repeat 🎵"
+        ]
+      },
+      hogwarts: {
+        bg: 'linear-gradient(135deg, #0d1b2a 0%, #415a77 25%, #778da9 50%, #415a77 75%, #0d1b2a 100%)',
+        music: 'https://pixabay.com/music/modern-classical-magical-world-183678/',
+        messages: [
+          "You're more magical than any spell I know ⚡",
+          "Like finding the Room of Requirement, you're everything I need 🏰",
+          "You're my Patronus in the darkest times 🦌",
+          "More precious than the Philosopher's Stone 💎",
+          "You make me believe in magic beyond Hogwarts ✨"
+        ]
+      }
+    };
+
+    function updateLoveMeter() {
+      const loveFill = document.querySelector('.love-fill');
+      loveFill.style.width = loveLevel + '%';
+      document.getElementById('loveLevelText').textContent = `Love Level: ${loveLevel}%`;
+      if (loveLevel >= 100) {
+        loveFill.classList.add('full');
+        confetti({
+          particleCount: 200,
+          spread: 100,
+          origin: { y: 0.6 }
+        });
+        setTimeout(() => alert('Love is at maximum! 💖'), 500);
+      }
+    }
+
+    function stopAllSounds() {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById('backgroundMusic');
+      const toggleButton = document.getElementById('musicToggle');
+      if (isMusicPlaying) {
+        music.pause();
+        toggleButton.textContent = '🎵';
+        toggleButton.setAttribute('aria-label', 'Play Music');
+      } else {
+        music.play().catch(() => console.log('Autoplay prevented'));
+        toggleButton.textContent = '🔇';
+        toggleButton.setAttribute('aria-label', 'Pause Music');
+      }
+      isMusicPlaying = !isMusicPlaying;
+    }
+
     function createStars() {
       const starContainer = document.getElementById('stars');
       for (let i = 0; i < 100; i++) {
@@ -440,7 +890,6 @@
       }
     }
 
-    // Create floating hearts
     function createFloatingHearts() {
       const heartContainer = document.getElementById('hearts');
       setInterval(() => {
@@ -454,15 +903,12 @@
           heartContainer.appendChild(heart);
           
           setTimeout(() => {
-            if (heart.parentNode) {
-              heart.parentNode.removeChild(heart);
-            }
+            if (heart.parentNode) heart.parentNode.removeChild(heart);
           }, 8000);
         }
       }, 1000);
     }
 
-    // Create sparkle effect
     function createSparkles(x, y) {
       for (let i = 0; i < 8; i++) {
         const sparkle = document.createElement('div');
@@ -474,15 +920,19 @@
         document.body.appendChild(sparkle);
         
         setTimeout(() => {
-          if (sparkle.parentNode) {
-            sparkle.parentNode.removeChild(sparkle);
-          }
+          if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
         }, 2000);
       }
     }
 
-    // Interactive functions
     function createFireworks() {
+      stopAllSounds();
+      document.getElementById('sparkleSound').play().catch(() => {});
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
       const messageBox = document.getElementById('messageBox');
       for (let i = 0; i < 20; i++) {
         setTimeout(() => {
@@ -493,25 +943,239 @@
         }, i * 100);
       }
       
-      // Add a magical glow effect
       messageBox.style.boxShadow = '0 0 50px rgba(255, 105, 180, 0.8), 0 20px 60px rgba(0, 0, 0, 0.3)';
       setTimeout(() => {
         messageBox.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
       }, 2000);
+      loveLevel = Math.min(loveLevel + 10, 100);
+      updateLoveMeter();
     }
 
-    let secretMessages = [
-      "You make my heart skip beats I didn't know existed 💓",
-      "Every day with you feels like a love song 🎶",
-      "You're the reason I believe in magic ✨",
-      "My love for you grows stronger with every heartbeat 💗",
-      "You're my favorite notification, my pretty little baby 💕"
-    ];
+    function setTheme(themeName) {
+      stopAllSounds();
+      document.getElementById('themeChangeSound').play().catch(() => {});
+      currentTheme = themeName;
+      const theme = themes[themeName];
+      
+      // Update background
+      document.body.style.background = theme.bg;
+      document.body.style.backgroundSize = '400% 400%';
+      
+      // Update body class for theme-specific styling
+      document.body.className = `${themeName}-theme`;
+      
+      // Update active button
+      document.querySelectorAll('.theme-button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(themeName + 'Btn').classList.add('active');
+      
+      // Manage theme backgrounds
+      document.querySelectorAll('.theme-background').forEach(bg => {
+        bg.classList.remove('visible');
+        bg.style.display = 'none';
+      });
+      if (themeName === 'cigarettes') {
+        const cigBg = document.getElementById('cigarettesBackground');
+        cigBg.style.display = 'block';
+        setTimeout(() => cigBg.classList.add('visible'), 10);
+      }
+      
+      // Update background music
+      const music = document.getElementById('backgroundMusic');
+      music.src = theme.music;
+      if (isMusicPlaying) {
+        music.play().catch(() => console.log('Autoplay prevented'));
+      }
+      
+      // Hide all floating elements
+      document.getElementById('hearts').style.opacity = '0';
+      document.getElementById('guitars').style.opacity = '0';
+      document.getElementById('magicalParticles').style.opacity = '0';
+      
+      // Show theme-specific elements
+      setTimeout(() => {
+        switch(themeName) {
+          case 'romantic':
+            document.getElementById('hearts').style.opacity = '1';
+            showThemeMessage("Wrapped in starlight and endless love 💕");
+            break;
+          case 'cigarettes':
+            document.getElementById('guitars').style.opacity = '1';
+            createGuitars();
+            showThemeMessage("Slow songs and soft whispers, just like us 🎸");
+            break;
+          case 'instruments':
+            document.getElementById('guitars').style.opacity = '1';
+            createInstruments();
+            showThemeMessage("Our love is the most beautiful symphony 🎵");
+            break;
+          case 'hogwarts':
+            document.getElementById('magicalParticles').style.opacity = '1';
+            createMagicalParticles();
+            showThemeMessage("You're the magic I never knew I was looking for ⚡");
+            break;
+        }
+      }, 500);
+    }
+
+    function showThemeMessage(message) {
+      const themeMsg = document.getElementById('themeMessage');
+      themeMsg.textContent = message;
+      themeMsg.classList.add('show');
+      setTimeout(() => themeMsg.classList.remove('show'), 4000);
+    }
+
+    function createGuitars() {
+      const guitarContainer = document.getElementById('guitars');
+      guitarContainer.innerHTML = '';
+      setInterval(() => {
+        if (currentTheme === 'cigarettes' && guitarContainer.children.length < 6) {
+          const guitar = document.createElement('div');
+          guitar.className = 'guitar';
+          guitar.innerHTML = '🎸';
+          guitar.style.left = Math.random() * 100 + '%';
+          guitar.style.animationDuration = Math.random() * 3 + 8 + 's';
+          guitar.style.animationDelay = Math.random() * 2 + 's';
+          guitarContainer.appendChild(guitar);
+          setTimeout(() => {
+            if (guitar.parentNode) guitar.parentNode.removeChild(guitar);
+          }, 12000);
+        }
+      }, 2000);
+    }
+
+    function createInstruments() {
+      const guitarContainer = document.getElementById('guitars');
+      guitarContainer.innerHTML = '';
+      const instruments = ['🎸', '🎹', '🎻', '🎺', '🥁', '🎷', '🎵', '🎼'];
+      setInterval(() => {
+        if (currentTheme === 'instruments' && guitarContainer.children.length < 8) {
+          const instrument = document.createElement('div');
+          instrument.className = 'guitar';
+          instrument.innerHTML = instruments[Math.floor(Math.random() * instruments.length)];
+          instrument.style.left = Math.random() * 100 + '%';
+          instrument.style.animationDuration = Math.random() * 4 + 6 + 's';
+          instrument.style.fontSize = Math.random() * 10 + 20 + 'px';
+          guitarContainer.appendChild(instrument);
+          setTimeout(() => {
+            if (instrument.parentNode) instrument.parentNode.removeChild(instrument);
+          }, 10000);
+        }
+      }, 1500);
+    }
+
+    function createMagicalParticles() {
+      const magicContainer = document.getElementById('magicalParticles');
+      magicContainer.innerHTML = '';
+      const magicSymbols = ['⚡', '🌟', '✨', '🔮', '🦉', '🪄', '⭐', '💫'];
+      setInterval(() => {
+        if (currentTheme === 'hogwarts' && magicContainer.children.length < 10) {
+          const particle = document.createElement('div');
+          particle.className = 'magic-particle';
+          particle.innerHTML = magicSymbols[Math.floor(Math.random() * magicSymbols.length)];
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.animationDuration = Math.random() * 3 + 6 + 's';
+          particle.style.fontSize = Math.random() * 8 + 14 + 'px';
+          magicContainer.appendChild(particle);
+          setTimeout(() => {
+            if (particle.parentNode) particle.parentNode.removeChild(particle);
+          }, 9000);
+        }
+      }, 1200);
+    }
+
+    function playThemeEffect() {
+      stopAllSounds();
+      document.getElementById('magicSound').play().catch(() => {});
+      switch(currentTheme) {
+        case 'romantic':
+          createFireworks();
+          break;
+        case 'cigarettes':
+          createGuitarWave();
+          break;
+        case 'instruments':
+          createMusicalNotes();
+          break;
+        case 'hogwarts':
+          createSpellEffect();
+          break;
+      }
+      loveLevel = Math.min(loveLevel + 5, 100);
+      updateLoveMeter();
+    }
+
+    function createGuitarWave() {
+      const messageBox = document.getElementById('messageBox');
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const guitar = document.createElement('div');
+          guitar.innerHTML = '🎸';
+          guitar.style.position = 'fixed';
+          guitar.style.left = (i * 80 + Math.random() * 40) + 'px';
+          guitar.style.top = Math.random() * window.innerHeight + 'px';
+          guitar.style.fontSize = '25px';
+          guitar.style.pointerEvents = 'none';
+          guitar.style.zIndex = '1000';
+          guitar.style.animation = 'guitarWave 2s ease-out forwards';
+          document.body.appendChild(guitar);
+          setTimeout(() => {
+            if (guitar.parentNode) guitar.parentNode.removeChild(guitar);
+          }, 2000);
+        }, i * 150);
+      }
+    }
+
+    function createMusicalNotes() {
+      const notes = ['🎵', '🎶', '🎼', '♪', '♫', '♬'];
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          const note = document.createElement('div');
+          note.innerHTML = notes[Math.floor(Math.random() * notes.length)];
+          note.style.position = 'fixed';
+          note.style.left = Math.random() * window.innerWidth + 'px';
+          note.style.top = Math.random() * window.innerHeight + 'px';
+          note.style.fontSize = Math.random() * 15 + 20 + 'px';
+          note.style.color = ['#ff69b4', '#dda0dd', '#ffc0cb', '#ffb6c1'][Math.floor(Math.random() * 4)];
+          note.style.pointerEvents = 'none';
+          note.style.zIndex = '1000';
+          note.style.animation = 'musicDance 3s ease-out forwards';
+          document.body.appendChild(note);
+          setTimeout(() => {
+            if (note.parentNode) note.parentNode.removeChild(note);
+          }, 3000);
+        }, i * 100);
+      }
+    }
+
+    function createSpellEffect() {
+      const spells = ['⚡', '✨', '🌟', '💫', '🔮'];
+      const colors = ['#ffd700', '#ff69b4', '#dda0dd', '#87ceeb'];
+      for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+          const spell = document.createElement('div');
+          spell.innerHTML = spells[Math.floor(Math.random() * spells.length)];
+          spell.style.position = 'fixed';
+          spell.style.left = Math.random() * window.innerWidth + 'px';
+          spell.style.top = Math.random() * window.innerHeight + 'px';
+          spell.style.fontSize = Math.random() * 10 + 18 + 'px';
+          spell.style.color = colors[Math.floor(Math.random() * colors.length)];
+          spell.style.pointerEvents = 'none';
+          spell.style.zIndex = '1000';
+          spell.style.animation = 'spellCast 2.5s ease-out forwards';
+          document.body.appendChild(spell);
+          setTimeout(() => {
+            if (spell.parentNode) spell.parentNode.removeChild(spell);
+          }, 2500);
+        }, i * 80);
+      }
+    }
 
     function showLoveMessage() {
-      const randomMessage = secretMessages[Math.floor(Math.random() * secretMessages.length)];
+      stopAllSounds();
+      document.getElementById('magicSound').play().catch(() => {});
+      const currentMessages = themes[currentTheme].messages;
+      const randomMessage = currentMessages[Math.floor(Math.random() * currentMessages.length)];
       
-      // Create floating message
       const messageDiv = document.createElement('div');
       messageDiv.innerHTML = randomMessage;
       messageDiv.style.position = 'fixed';
@@ -527,53 +1191,26 @@
       messageDiv.style.zIndex = '1000';
       messageDiv.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
       messageDiv.style.animation = 'fadeIn 0.5s ease-out';
+      messageDiv.style.maxWidth = '80%';
       
       document.body.appendChild(messageDiv);
       
       setTimeout(() => {
         messageDiv.style.animation = 'fadeOut 0.5s ease-out forwards';
         setTimeout(() => {
-          if (messageDiv.parentNode) {
-            messageDiv.parentNode.removeChild(messageDiv);
-          }
+          if (messageDiv.parentNode) messageDiv.parentNode.removeChild(messageDiv);
         }, 500);
       }, 3000);
+      loveLevel = Math.min(loveLevel + 5, 100);
+      updateLoveMeter();
     }
 
-    let moodIndex = 0;
-    const moods = [
-      { bg: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #2a1a3a 50%, #1a0a2a 75%, #0a0a0a 100%)', name: 'Romantic Night' },
-      { bg: 'linear-gradient(135deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%)', name: 'Dreamy Aurora' },
-      { bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', name: 'Soft Lavender' },
-      { bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', name: 'Pink Sunset' }
-    ];
-
     function changeBackgroundMusic() {
-      moodIndex = (moodIndex + 1) % moods.length;
-      document.body.style.background = moods[moodIndex].bg;
-      document.body.style.backgroundSize = '400% 400%';
-      
-      // Show mood change notification
-      const notification = document.createElement('div');
-      notification.innerHTML = `Mood: ${moods[moodIndex].name} 🎨`;
-      notification.style.position = 'fixed';
-      notification.style.top = '20px';
-      notification.style.right = '20px';
-      notification.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-      notification.style.color = 'white';
-      notification.style.padding = '10px 20px';
-      notification.style.borderRadius = '10px';
-      notification.style.fontSize = '0.9em';
-      notification.style.zIndex = '1000';
-      notification.style.animation = 'slideInRight 0.5s ease-out';
-      
-      document.body.appendChild(notification);
-      
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
-        }
-      }, 2000);
+      const music = document.getElementById('backgroundMusic');
+      music.src = themes[currentTheme].music;
+      if (isMusicPlaying) {
+        music.play().catch(() => console.log('Autoplay prevented'));
+      }
     }
 
     // Mouse interaction effects
@@ -597,38 +1234,23 @@
       document.body.appendChild(heart);
       
       setTimeout(() => {
-        if (heart.parentNode) {
-          heart.parentNode.removeChild(heart);
-        }
+        if (heart.parentNode) heart.parentNode.removeChild(heart);
       }, 1000);
+      loveLevel = Math.min(loveLevel + 1, 100);
+      updateLoveMeter();
     });
 
-    // Add CSS for additional animations
-    const additionalStyles = `
-      @keyframes fadeOut {
-        0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    // Keyboard accessibility
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const focused = document.activeElement;
+        if (focused.classList.contains('magic-button') || focused.classList.contains('theme-button')) {
+          focused.click();
+        } else if (focused === document.getElementById('musicToggle')) {
+          toggleMusic();
+        }
       }
-      
-      @keyframes slideInRight {
-        0% { transform: translateX(100%); opacity: 0; }
-        100% { transform: translateX(0); opacity: 1; }
-      }
-      
-      @keyframes heartPop {
-        0% { transform: scale(0) rotate(0deg); opacity: 1; }
-        50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
-        100% { transform: scale(0) rotate(360deg); opacity: 0; }
-      }
-    `;
-    
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = additionalStyles;
-    document.head.appendChild(styleSheet);
-
-    // Initialize everything
-    createStars();
-    createFloatingHearts();
+    });
 
     // Title animation
     const title = document.getElementById('title');
@@ -648,6 +1270,12 @@
         title.style.animation = 'shimmer 3s ease-in-out infinite';
       }, 100);
     }, 8000);
+
+    // Initialize
+    createStars();
+    createFloatingHearts();
+    setTheme('romantic');
+    document.getElementById('musicToggle').addEventListener('click', toggleMusic);
 
     // Welcome message
     setTimeout(() => {
